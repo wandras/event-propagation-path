@@ -1,20 +1,19 @@
-Event.prototype.propagationPath = function propagationPath() {
-    var polyfill = function () {
-        var element = this.target || null;
-        var pathArr = [element];
-
-        if (!element || !element.parentElement) {
-            return [];
-        }
-
-        while (element.parentElement) {
-            element = element.parentElement;
-            pathArr.unshift(element);
-        }
-
-        return pathArr;
-    }.bind(this);
-
-    return this.path || (this.composedPath && this.composedPath()) || polyfill();
+Event.prototype.composedPath = Event.prototype.composedPath || function() {
+    var target = this.target || null;
+    
+    if (!target || !target.parentElement) {
+        return [];
+    }
+    
+    var path = [target];
+    
+    while (target.parentElement) {
+        target = target.parentElement;
+        path.push(target);
+    }
+    
+    path.push(document, window);
+    
+    return path;
 };
 
